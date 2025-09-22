@@ -1,0 +1,43 @@
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"time"
+	"webscrapper/internal/database"
+
+	"github.com/google/uuid"
+)
+
+func (apiCfg *apiConfig) handleuserdb(w http.ResponseWriter, r *http.Request) {
+
+	type parameter struct {
+		Name string `json:"name"`
+	}
+
+	decod := json.NewDecoder(r.Body)
+	para := parameter{}
+
+	err := decod.Decode(&para)
+	if err != nil {
+		handlingerrorwithjson(w, 400, fmt.Sprintf("prasing Error %s", err))
+		return
+	}
+
+	user, err := apiCfg.DB.CreateUser(r.Context(), database.CreateUserParams{
+
+		ID:        uuid.New(),
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: time.Now().UTC(),
+		Name:      para.Name,
+	})
+
+	if err != nil {
+		handlingerrorwithjson(w, 400, fmt.Sprintf("COuldnt make user %s", err))
+		return
+	}
+
+	responsewithjson(w, 200, user)
+
+}
