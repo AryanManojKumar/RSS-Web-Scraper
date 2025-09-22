@@ -25,7 +25,7 @@ func (apiCfg *apiConfig) handleuserdb(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := apiCfg.DB.CreateUser(r.Context(), database.CreateUserParams{
+	user, err := apiCfg.DB.CreateUsers(r.Context(), database.CreateUsersParams{
 
 		ID:        uuid.New(),
 		CreatedAt: time.Now().UTC(),
@@ -38,6 +38,10 @@ func (apiCfg *apiConfig) handleuserdb(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	responsewithjson(w, 200, user)
+	responsewithjson(w, 200, databaseUsertoUser(user))
+
+}
+
+func (apiCfg *apiConfig) handlerGetUserFromApi(w http.ResponseWriter, r *http.Request) {
 
 }
