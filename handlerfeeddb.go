@@ -44,3 +44,16 @@ func (apiCfg *apiConfig) handleuserfeed(w http.ResponseWriter, r *http.Request, 
 	responsewithjson(w, 201, databaseFeedtoFeed(feed))
 
 }
+
+func (apiCfg *apiConfig) handlerGetfeeds(w http.ResponseWriter, r *http.Request) {
+
+	feeds, err := apiCfg.DB.GetAllFeeds(r.Context())
+
+	if err != nil {
+		handlingerrorwithjson(w, 400, fmt.Sprintf("COuldnt get all the feeds %s", err))
+		return
+	}
+
+	responsewithjson(w, 201, databaseFeedstoFeeds(feeds))
+
+}

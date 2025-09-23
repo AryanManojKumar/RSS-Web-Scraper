@@ -63,6 +63,7 @@ func main() {
 	arouter.Post("/users", apiCfg.handleuserdb)
 	arouter.Get("/users", apiCfg.middlewearauth(apiCfg.handlerGetUserFromApi))
 	arouter.Post("/feed", apiCfg.middlewearauth(apiCfg.handleuserfeed))
+	arouter.Get("/feed", apiCfg.handlerGetfeeds)
 
 	router.Mount("/v1", arouter)
 
