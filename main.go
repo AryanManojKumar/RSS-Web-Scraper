@@ -61,6 +61,8 @@ func main() {
 	arouter.Get("/healthz", readiness)
 	arouter.Get("/error", errorhandler)
 	arouter.Post("/users", apiCfg.handleuserdb)
+	arouter.Get("/users", apiCfg.middlewearauth(apiCfg.handlerGetUserFromApi))
+	arouter.Post("/feed", apiCfg.middlewearauth(apiCfg.handleuserfeed))
 
 	router.Mount("/v1", arouter)
 

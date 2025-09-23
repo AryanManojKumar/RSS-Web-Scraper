@@ -38,10 +38,11 @@ func (apiCfg *apiConfig) handleuserdb(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	responsewithjson(w, 200, databaseUsertoUser(user))
+	responsewithjson(w, 201, databaseUsertoUser(user))
 
 }
 
-func (apiCfg *apiConfig) handlerGetUserFromApi(w http.ResponseWriter, r *http.Request) {
+func (apiCfg *apiConfig) handlerGetUserFromApi(w http.ResponseWriter, r *http.Request, user database.User) {
 
+	responsewithjson(w, 200, databaseUsertoUser(user))
 }
