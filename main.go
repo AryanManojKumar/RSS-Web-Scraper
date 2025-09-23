@@ -64,6 +64,9 @@ func main() {
 	arouter.Get("/users", apiCfg.middlewearauth(apiCfg.handlerGetUserFromApi))
 	arouter.Post("/feed", apiCfg.middlewearauth(apiCfg.handleuserfeed))
 	arouter.Get("/feed", apiCfg.handlerGetfeeds)
+	arouter.Post("/feed_follow", apiCfg.middlewearauth(apiCfg.handleuserfeedfollow))
+	arouter.Get("/feed_follow", apiCfg.middlewearauth(apiCfg.handleuserfeedfollows))
+	arouter.Delete("/feed_follow/{feedfollowid}", apiCfg.middlewearauth(apiCfg.handledeletefeedfollow))
 
 	router.Mount("/v1", arouter)
 
