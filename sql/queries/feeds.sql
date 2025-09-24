@@ -11,7 +11,7 @@ SELECT * FROM feeds
 ORDER BY last_fetch_at ASC NULLS FIRST
 LIMIT $1;
 
---name: Markfeedasfetched :one
+-- name: MarkFeedAsFetched :one
 UPDATE feeds
 SET last_fetch_at = NOW(),
 updated_at = NOW()

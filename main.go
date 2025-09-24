@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 	"webscrapper/internal/database"
 
 	"github.com/go-chi/chi/v5"
@@ -45,10 +46,13 @@ func main() {
 	if err != nil {
 		log.Fatal("Couldnt connect to the database", err)
 	}
+	dbcon := database.New(connection)
 
 	apiCfg := apiConfig{
-		DB: database.New(connection),
+		DB: dbcon,
 	}
+
+	go scrappig(dbcon, 10, time.Minute)
 
 	router := chi.NewRouter()
 
