@@ -89,3 +89,43 @@ func databasefftoff(dbffs []database.FeedFollow) []Feedfollow {
 	return feedsfollows
 
 }
+
+type post struct {
+	ID          uuid.UUID `json:"id"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+	Title       string    `json:"title"`
+	Description *string   `json:"description"`
+	PublishedAt time.Time `json:"published_at"`
+	Url         string    `json:"url"`
+	FeedID      uuid.UUID `json:"feed_id"`
+}
+
+func databaseposttopost(ab database.Post) post {
+
+	var description *string
+	if ab.Description.Valid {
+		description = &ab.Description.String
+	}
+
+	return post{
+		ID:          ab.ID,
+		CreatedAt:   ab.CreatedAt,
+		UpdatedAt:   ab.UpdatedAt,
+		Title:       ab.Title,
+		Description: description,
+		PublishedAt: ab.PublishedAt,
+		Url:         ab.Url,
+		FeedID:      ab.FeedID,
+	}
+}
+
+func databsePostsToPost(dbpost []database.Post) []post {
+	post := []post{}
+
+	for _, dbdbpost := range dbpost {
+		post = append(post, databaseposttopost(dbdbpost))
+	}
+	return post
+
+}

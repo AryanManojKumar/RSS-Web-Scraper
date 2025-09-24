@@ -2,10 +2,14 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"log"
+	"strings"
 	"sync"
 	"time"
 	"webscrapper/internal/database"
+
+	"github.com/google/uuid"
 )
 
 func scrappig(dbquerire *database.Queries, concurenccy int, timeinterval time.Duration) {
@@ -47,7 +51,34 @@ func fetchingfeed(db *database.Queries, wg *sync.WaitGroup, feed database.Feed) 
 	}
 
 	for _, iteams := range rssfeed.Channel.Items {
-		log.Println("found post", iteams.Title, "one feed", feed.Name)
+		description := sql.NullString{}
+		if iteams.Description != "" {
+			description.String = iteams.Description
+			description.Valid = true
+		}
+
+		pubAt, err := time.Parse(time.RFC1123Z, iteams.PubDate)
+		if err != nil {
+			log.Printf("couldnt parse date %v with err %v", iteams.PubDate, err)
+			continue
+		}
+		_, err = db.CreatePost(context.Background(), database.CreatePostParams{
+			ID:          uuid.New(),
+			CreatedAt:   time.Now(),
+			UpdatedAt:   time.Now(),
+			Title:       iteams.Title,
+			Description: description,
+			PublishedAt: pubAt,
+			Url:         iteams.Link,
+			FeedID:      feed.ID,
+		})
+
+		if err != nil {
+			if strings.Contains(err.Error(), "duplicate key") {
+				continue
+			}
+			log.Println("failed to create post", err)
+		}
 
 	}
 	log.Printf("feed %s collected , %v post found ", feed.Name, len(rssfeed.Channel.Items))

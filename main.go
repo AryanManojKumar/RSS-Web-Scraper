@@ -69,10 +69,15 @@ func main() {
 
 	arouter.Get("/healthz", readiness)
 	arouter.Get("/error", errorhandler)
+
 	arouter.Post("/users", apiCfg.handleuserdb)
 	arouter.Get("/users", apiCfg.middlewearauth(apiCfg.handlerGetUserFromApi))
+
+	arouter.Get("/upost", apiCfg.middlewearauth(apiCfg.handlerGetUserpostforuser))
+
 	arouter.Post("/feed", apiCfg.middlewearauth(apiCfg.handleuserfeed))
 	arouter.Get("/feed", apiCfg.handlerGetfeeds)
+
 	arouter.Post("/feed_follow", apiCfg.middlewearauth(apiCfg.handleuserfeedfollow))
 	arouter.Get("/feed_follow", apiCfg.middlewearauth(apiCfg.handleuserfeedfollows))
 	arouter.Delete("/feed_follow/{feedfollowid}", apiCfg.middlewearauth(apiCfg.handledeletefeedfollow))
