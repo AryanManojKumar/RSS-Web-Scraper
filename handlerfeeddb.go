@@ -11,7 +11,6 @@ import (
 )
 
 func (apiCfg *apiConfig) handleuserfeed(w http.ResponseWriter, r *http.Request, user database.User) {
-
 	type parameter struct {
 		Name string `json:"name"`
 		Url  string `json:"url"`
@@ -27,7 +26,6 @@ func (apiCfg *apiConfig) handleuserfeed(w http.ResponseWriter, r *http.Request, 
 	}
 
 	feed, err := apiCfg.DB.CreateFeeds(r.Context(), database.CreateFeedsParams{
-
 		ID:        uuid.New(),
 		CreatedAt: time.Now().UTC(),
 		UpdatedAt: time.Now().UTC(),
@@ -42,7 +40,6 @@ func (apiCfg *apiConfig) handleuserfeed(w http.ResponseWriter, r *http.Request, 
 	}
 
 	responsewithjson(w, 201, databaseFeedtoFeed(feed))
-
 }
 
 func (apiCfg *apiConfig) handlerGetfeeds(w http.ResponseWriter, r *http.Request) {

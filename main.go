@@ -19,6 +19,11 @@ type apiConfig struct {
 }
 
 func main() {
+	testfeed, err := Urltofeed("https://www.wagslane.dev/index.xml")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(testfeed)
 
 	fmt.Println("Hello world")
 

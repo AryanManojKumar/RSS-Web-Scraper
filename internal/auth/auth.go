@@ -12,6 +12,7 @@ import (
 func Getapikey(headers http.Header) (string, error) {
 	apival := headers.Get("Authorization")
 
+	// "ApiKey <key>"
 	if apival == "" {
 		return "", errors.New("empty authenticaiton found no api key found on header")
 	}

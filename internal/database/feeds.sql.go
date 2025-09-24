@@ -15,7 +15,7 @@ import (
 const createFeeds = `-- name: CreateFeeds :one
 INSERT INTO feeds (id, created_at, updated_at, name, url,user_id)
 VALUES ($1, $2, $3, $4,$5,$6 )
-RETURNING id, created_at, updated_at, name, url, user_id
+RETURNING id, created_at, updated_at, name, url, user_id, last_fetch_at
 `
 
 type CreateFeedsParams struct {
@@ -44,12 +44,13 @@ func (q *Queries) CreateFeeds(ctx context.Context, arg CreateFeedsParams) (Feed,
 		&i.Name,
 		&i.Url,
 		&i.UserID,
+		&i.LastFetchAt,
 	)
 	return i, err
 }
 
 const getAllFeeds = `-- name: GetAllFeeds :many
-SELECT id, created_at, updated_at, name, url, user_id FROM feeds
+SELECT id, created_at, updated_at, name, url, user_id, last_fetch_at FROM feeds
 `
 
 func (q *Queries) GetAllFeeds(ctx context.Context) ([]Feed, error) {
@@ -68,6 +69,44 @@ func (q *Queries) GetAllFeeds(ctx context.Context) ([]Feed, error) {
 			&i.Name,
 			&i.Url,
 			&i.UserID,
+			&i.LastFetchAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getnextfeedtofetch = `-- name: Getnextfeedtofetch :many
+SELECT id, created_at, updated_at, name, url, user_id, last_fetch_at FROM feeds
+ORDER BY last_fetch_at ASC NULLS FIRST
+LIMIT $1
+`
+
+func (q *Queries) Getnextfeedtofetch(ctx context.Context, limit int32) ([]Feed, error) {
+	rows, err := q.db.QueryContext(ctx, getnextfeedtofetch, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Feed
+	for rows.Next() {
+		var i Feed
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.Name,
+			&i.Url,
+			&i.UserID,
+			&i.LastFetchAt,
 		); err != nil {
 			return nil, err
 		}
